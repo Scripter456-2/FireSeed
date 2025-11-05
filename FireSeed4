@@ -1,0 +1,338 @@
+import sys
+import subprocess
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QLineEdit, QToolBar, QAction, QTabWidget, QWidget,
+    QVBoxLayout, QTextEdit, QDockWidget, QPushButton, QLabel, QHBoxLayout
+)
+from PyQt5.QtCore import QUrl, Qt
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineScript, QWebEngineProfile
+
+try:
+    from PyQt5 import QtGui
+except ImportError:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'PyQt5', 'PyQtWebEngine'])
+    from PyQt5 import QtGui
+
+HOMEPAGE_HTML = '''
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FireSeed4</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 350px;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .link {
+            background: #1c1c1c;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.2s;
+        }
+
+        .link:hover {
+            background: #00aaff;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 13px;
+            color: #7a7a7a;
+        }
+    </style>
+
+    <script>
+        function searchGoogle(event) {
+            if (event.key === "Enter") {
+                let q = document.getElementById("search").value;
+                window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Домашняя страница</h1>
+
+    <div class="search-box">
+        <input id="search" placeholder="Искать в Google..." onkeypress="searchGoogle(event)">
+    </div>
+
+    <div class="links">
+        <a class="link" href="https://youtube.com">YouTube</a>
+        <a class="link" href="https://google.com">Google</a>
+        <a class="link" href="https://github.com">GitHub</a>
+    </div>
+
+    <footer>© 2025</footer>
+</body>
+</html>
+'''
+
+# Default user CSS injected into every page
+DEFAULT_USER_CSS = """
+/* FireSeed2 user stylesheet (injected) */
+:root { color-scheme: dark; }
+html, body { background-color: #0b0f14 !important; color: #d7dade !important; }
+img { max-width: 100%; height: auto; }
+"""
+
+def install_user_css(profile: QWebEngineProfile, css: str, name: str = "user_css"):
+    scripts = profile.scripts()
+    # Remove existing script with same name
+    for s in list(scripts.findScripts()):
+        try:
+            if s.name() == name:
+                scripts.remove(s)
+        except Exception:
+            pass
+    js = """
+(function(){
+  try {
+    var css = `%s`;
+    var id = 'fireseed2-usercss';
+    var existing = document.getElementById(id);
+    if (existing) existing.remove();
+    var style = document.createElement('style');
+    style.id = id;
+    style.type = 'text/css';
+    style.appendChild(document.createTextNode(css));
+    (document.head || document.documentElement).appendChild(style);
+  } catch(e) { console.error('usercss inject', e); }
+})();
+""" % css.replace('`', '\\`').replace('\\', '\\\\')
+    script = QWebEngineScript()
+    script.setName(name)
+    script.setSourceCode(js)
+    script.setInjectionPoint(QWebEngineScript.DocumentCreation)
+    script.setRunsOnSubFrames(True)
+    script.setWorldId(QWebEngineScript.MainWorld)
+    try:
+        scripts.insert(script)
+    except Exception:
+        # fallback: insert into default profile
+        QWebEngineProfile.defaultProfile().scripts().insert(script)
+
+class BrowserTab(QWidget):
+    def __init__(self, url='about:home', user_css=DEFAULT_USER_CSS):
+        super().__init__()
+        self.layout = QVBoxLayout(self)
+        self.web = QWebEngineView()
+        self.layout.addWidget(self.web)
+        self.setLayout(self.layout)
+
+        # Force English accept-language
+        self.web.page().profile().setHttpAcceptLanguage('en-US,en;q=0.9')
+
+        # Install user css into this profile (applies to all pages in profile)
+        try:
+            install_user_css(self.web.page().profile(), user_css)
+        except Exception:
+            try:
+                install_user_css(QWebEngineProfile.defaultProfile(), user_css)
+            except Exception:
+                pass
+
+        self.load_url(url)
+
+    def load_url(self, url):
+        if url == 'about:home':
+            # provide baseUrl so relative assets and CSS behave
+            self.web.setHtml(HOMEPAGE_HTML, QUrl('about:home'))
+        else:
+            self.web.load(QUrl(url))
+
+class BrowserApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('FireSeed2')
+        self.resize(1200, 800)
+        self._build_ui()
+        self._build_console()
+
+    def _build_ui(self):
+        self.tabs = QTabWidget()
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self._close_tab)
+        self.setCentralWidget(self.tabs)
+
+        self._add_tab('about:home')
+
+        nav = QToolBar('Navigation')
+        self.addToolBar(nav)
+        self.back_act = QAction('◀', self)
+        self.forward_act = QAction('▶', self)
+        self.reload_act = QAction('⟳', self)
+        self.home_act = QAction('🏠', self)
+        self.newtab_act = QAction('+', self)
+        self.addr = QLineEdit(self)
+
+        nav.addAction(self.back_act)
+        nav.addAction(self.forward_act)
+        nav.addAction(self.reload_act)
+        nav.addAction(self.home_act)
+        nav.addAction(self.newtab_act)
+        nav.addWidget(self.addr)
+
+        self.back_act.triggered.connect(lambda: self.current_tab().web.back())
+        self.forward_act.triggered.connect(lambda: self.current_tab().web.forward())
+        self.reload_act.triggered.connect(lambda: self.current_tab().web.reload())
+        self.home_act.triggered.connect(lambda: self.current_tab().load_url('about:home'))
+        self.newtab_act.triggered.connect(lambda: self._add_tab('about:home'))
+        self.addr.returnPressed.connect(self._on_enter_address)
+        self.tabs.currentChanged.connect(self._on_tab_change)
+
+    def _build_console(self):
+        self.console = QDockWidget("Dev Console", self)
+        self.console.setAllowedAreas(Qt.BottomDockWidgetArea | Qt.TopDockWidgetArea)
+        console_widget = QWidget()
+        vb = QVBoxLayout(console_widget)
+
+        label = QLabel("Run JavaScript (current tab):")
+        self.js_edit = QTextEdit()
+        run_js_btn = QPushButton("Run JS")
+        run_js_btn.clicked.connect(self.run_js)
+
+        label_css = QLabel("Inject CSS (applies to all pages):")
+        self.css_edit = QTextEdit()
+        self.css_edit.setPlainText(DEFAULT_USER_CSS)
+        inject_css_btn = QPushButton("Inject CSS")
+        inject_css_btn.clicked.connect(self.inject_css)
+
+        btn_row = QHBoxLayout()
+        btn_row.addWidget(run_js_btn)
+        btn_row.addWidget(inject_css_btn)
+
+        vb.addWidget(label)
+        vb.addWidget(self.js_edit)
+        vb.addLayout(btn_row)
+        vb.addWidget(label_css)
+        vb.addWidget(self.css_edit)
+
+        self.console.setWidget(console_widget)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.console)
+        self.console.setVisible(False)
+
+        # toggle action
+        self.dev_action = QAction('<>', self)
+        self.dev_action.triggered.connect(lambda: self.console.setVisible(not self.console.isVisible()))
+        self.menuBar().addAction(self.dev_action)
+
+    def run_js(self):
+        js = self.js_edit.toPlainText()
+        tab = self.current_tab()
+        if tab:
+            try:
+                tab.web.page().runJavaScript(js)
+            except Exception:
+                pass
+
+    def inject_css(self):
+        css = self.css_edit.toPlainText()
+        # install into default profile so it affects all tabs
+        try:
+            install_user_css(QWebEngineProfile.defaultProfile(), css, name="user_css_dynamic")
+            # also apply to current tab's profile
+            try:
+                install_user_css(self.current_tab().web.page().profile(), css, name="user_css_dynamic")
+            except Exception:
+                pass
+        except Exception:
+            pass
+        # reload current tab to force reapply
+        try:
+            self.current_tab().web.reload()
+        except Exception:
+            pass
+
+    def _add_tab(self, url):
+        tab = BrowserTab(url)
+        index = self.tabs.addTab(tab, 'New Tab')
+        self.tabs.setCurrentIndex(index)
+        tab.web.urlChanged.connect(lambda qurl, t=tab: self._update_tab_title(t, qurl))
+
+    def _close_tab(self, idx):
+        if self.tabs.count() > 1:
+            self.tabs.removeTab(idx)
+
+    def _update_tab_title(self, tab, qurl):
+        index = self.tabs.indexOf(tab)
+        if index >= 0:
+            title = qurl.host() or qurl.toString()
+            if len(title) > 24:
+                title = title[:21] + '...'
+            self.tabs.setTabText(index, title)
+            if self.tabs.currentWidget() == tab:
+                self.addr.setText(qurl.toString())
+
+    def _on_tab_change(self, index):
+        tab = self.current_tab()
+        if tab:
+            url = tab.web.url().toString()
+            self.addr.setText(url)
+            try:
+                self.back_act.triggered.disconnect()
+                self.forward_act.triggered.disconnect()
+                self.reload_act.triggered.disconnect()
+            except Exception:
+                pass
+            self.back_act.triggered.connect(lambda: tab.web.back())
+            self.forward_act.triggered.connect(lambda: tab.web.forward())
+            self.reload_act.triggered.connect(lambda: tab.web.reload())
+
+    def current_tab(self):
+        return self.tabs.currentWidget()
+
+    def _on_enter_address(self):
+        txt = self.addr.text().strip()
+        if not txt:
+            return
+        if txt == 'about:home':
+            self.current_tab().load_url('about:home')
+        elif not txt.startswith(('http://', 'https://', 'file://')):
+            txt = 'http://' + txt
+        self.current_tab().load_url(txt)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    w = BrowserApp()
+    w.show()
+    sys.exit(app.exec_())
