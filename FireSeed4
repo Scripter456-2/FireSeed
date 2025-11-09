@@ -90,10 +90,10 @@ HOMEPAGE_HTML = '''
 </head>
 
 <body>
-    <h1>Домашняя страница</h1>
+    <h1>Homepage</h1>
 
     <div class="search-box">
-        <input id="search" placeholder="Искать в Google..." onkeypress="searchGoogle(event)">
+        <input id="search" placeholder="Search..." onkeypress="searchGoogle(event)">
     </div>
 
     <div class="links">
