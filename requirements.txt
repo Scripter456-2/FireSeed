@@ -1,2 +1,4 @@
 pip install PyQt5
 pip install PyQtWebEngine
+
+// if you dont want to untall all stuff here you can just download an .exe version. which not needs all this command stuff. so you can run it without setting anything up.
