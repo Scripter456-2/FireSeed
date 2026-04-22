@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FireSeed Browser</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+		}
+		
+		header {
+			background-color: #333;
+			color: #fff;
+			padding: 20px;
+			text-align: center;
+		}
+		
+		nav ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		
+		nav li {
+			display: inline-block;
+			margin-right: 20px;
+		}
+		
+		nav a {
+			color: #fff;
+			text-decoration: none;
+		}
+		
+		main {
+			max-width: 800px;
+			margin: 40px auto;
+			padding: 20px;
+			background-color: #f9f9f9;
+			border: 1px solid #ddd;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+		
+		section {
+			margin-bottom: 40px;
+		}
+		
+		h2 {
+			font-weight: bold;
+			margin-top: 20px;
+		}
+		
+		button {
+			background-color: #4CAF50;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>FireSeed Browser</h1>
+		<nav>
+			<ul>
+				<li><a href="#about">About Me</a></li>
+				<li><a href="#features">Features</a></li>
+				<li><a href="#download">Download</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<section id="about">
+			<h2>About Me</h2>
+			<p>This is a brief description of the FireSeed browser and its creator.</p>
+		</section>
+		<section id="features">
+			<h2>Features</h2>
+			<ul>
+				<li>Fast and secure browsing experience</li>
+				<li>Simplified user interface</li>
+				<li>Support for latest web standards</li>
+			</ul>
+		</section>
+		<section id="download">
+			<h2>Download</h2>
+			<p>Get the latest version of FireSeed browser:</p>
+			<button id="release-btn">Download Release</button>
+			<button id="snapshot-btn">Download Snapshot</button>
+			<script>
+				const releaseBtn = document.getElementById('release-btn');
+				const snapshotBtn = document.getElementById('snapshot-btn');
+				
+				releaseBtn.addEventListener('click', () => {
+					location.href = 'https://github.com/your-username/FireSeed-Browser/releases/latest';
+				});
+				
+				snapshotBtn.addEventListener('click', () => {
+					location.href = 'https://github.com/your-username/FireSeed-Browser/tree/snapshot-tag';
+				});
+			</script>
+		</section>
+	</main>
+	<footer>
+		<p>&copy; 2023 FireSeed Browser. All rights reserved.</p>
+	</footer>
+</body>
+</html>
