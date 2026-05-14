@@ -1,127 +1,516 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>FireSeed Browser</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0 auto;
-			width: 800px;
-			background-color: #f9f9f9;
-		}
-		
-		header {
-			background-color: #333;
-			color: #fff;
-			padding: 20px;
-			text-align: center;
-			border-bottom: 1px solid #ccc;
-		}
-		
-		nav ul {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
-		
-		nav li {
-			margin-right: 20px;
-		}
-		
-		nav a {
-			color: #fff;
-			text-decoration: none;
-		}
-		
-		main {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 20px;
-			padding: 40px;
-			background-color: #f9f9f9;
-			border: 1px solid #ccc;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		}
-		
-		section {
-			margin-bottom: 40px;
-		}
-		
-		h2 {
-			font-weight: bold;
-			margin-top: 20px;
-		}
-		
-		button {
-			background-color: #4CAF50;
-			color: #fff;
-			border: none;
-			padding: 10px 20px;
-			font-size: 16px;
-			cursor: pointer;
-			display: block;
-			margin: 0 auto;
-		}
-		
-		footer {
-			background-color: #333;
-			color: #fff;
-			padding: 20px;
-			text-align: center;
-			border-top: 1px solid #ccc;
-		}
-	</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FireSeed – The Python Browser</title>
+  <meta name="description" content="FireSeed is a lightweight, fast Python-powered browser. Download the latest Release or Snapshot build from GitHub." />
+  <link rel="icon" type="image/x-icon" href="FireSeedIcon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fire1: #ff6a00;
+      --fire2: #ee0979;
+      --fire3: #ffb347;
+      --seed: #39d353;
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --card: #16161f;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0f0f5;
+      --muted: #888899;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS BACKGROUND ── */
+    #bg-canvas {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
+      opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      backdrop-filter: blur(18px);
+      background: rgba(10,10,15,0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+    }
+    .logo span.fire { color: var(--fire1); }
+    .logo span.seed { color: var(--seed); }
+
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color .2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-gh {
+      border: 1px solid var(--border);
+      padding: 7px 16px; border-radius: 8px;
+      color: var(--text) !important;
+      display: flex; align-items: center; gap: 6px;
+      transition: background .2s, border-color .2s !important;
+    }
+    .nav-gh:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,106,0,0.12);
+      border: 1px solid rgba(255,106,0,0.3);
+      color: var(--fire3); font-size: 0.78rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 28px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .badge::before { content: "🔥"; font-size: 0.85rem; }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3.2rem, 8vw, 6.5rem);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #fff 0%, var(--fire3) 40%, var(--fire1) 70%, var(--fire2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+
+    .hero-sub {
+      font-size: 1.15rem; color: var(--muted); max-width: 520px;
+      line-height: 1.7; margin-bottom: 56px;
+    }
+
+    /* ── DOWNLOAD BUTTONS ── */
+    .dl-wrapper {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      position: relative; overflow: hidden;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 32px; border-radius: 12px;
+      font-size: 1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer; text-decoration: none; border: none;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .btn:hover { transform: translateY(-3px); }
+    .btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background .18s;
+    }
+    .btn:hover::after { background: rgba(255,255,255,0.06); }
+
+    /* Release button */
+    .btn-release {
+      background: linear-gradient(135deg, var(--fire1), var(--fire2));
+      color: #fff;
+      box-shadow: 0 4px 30px rgba(255,106,0,0.35);
+    }
+    .btn-release:hover { box-shadow: 0 8px 40px rgba(255,106,0,0.55); }
+
+    /* Snapshot button */
+    .btn-snapshot {
+      background: linear-gradient(135deg, #1a1a28, #252535);
+      color: var(--text);
+      border: 1px solid rgba(57,211,83,0.35);
+      box-shadow: 0 4px 20px rgba(57,211,83,0.1);
+    }
+    .btn-snapshot:hover { box-shadow: 0 8px 30px rgba(57,211,83,0.25); border-color: rgba(57,211,83,0.6); }
+
+    .btn svg { flex-shrink: 0; }
+
+    .dl-note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+    .dl-note a { color: var(--fire3); text-decoration: none; }
+    .dl-note a:hover { text-decoration: underline; }
+
+    /* ── PILL TAGS ── */
+    .tags {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+      margin-top: 56px;
+    }
+    .tag {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 100px;
+      font-size: 0.78rem; color: var(--muted);
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      position: relative; z-index: 1;
+      padding: 100px 24px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .section-title {
+      text-align: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem; font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      text-align: center; color: var(--muted); font-size: 1rem;
+      margin-bottom: 60px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: rgba(255,106,0,0.3); transform: translateY(-4px); }
+
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 16px;
+      background: rgba(255,106,0,0.12);
+    }
+    .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+    .card p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+
+    /* ── DOWNLOAD SECTION ── */
+    .download-section {
+      position: relative; z-index: 1;
+      padding: 100px 24px;
+      text-align: center;
+    }
+    .download-box {
+      max-width: 680px; margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 56px 40px;
+      position: relative; overflow: hidden;
+    }
+    .download-box::before {
+      content: '';
+      position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255,106,0,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .download-box .section-title { margin-bottom: 8px; }
+    .download-box .section-sub { margin-bottom: 36px; }
+
+    .dl-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 20px;
+    }
+
+    .dl-card {
+      border-radius: 14px; padding: 24px 20px;
+      text-decoration: none; color: var(--text);
+      transition: transform .18s, box-shadow .18s;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .dl-card:hover { transform: translateY(-4px); }
+
+    .dl-card-release {
+      background: linear-gradient(135deg, rgba(255,106,0,0.2), rgba(238,9,121,0.15));
+      border: 1px solid rgba(255,106,0,0.4);
+      box-shadow: 0 4px 24px rgba(255,106,0,0.15);
+    }
+    .dl-card-release:hover { box-shadow: 0 8px 40px rgba(255,106,0,0.3); }
+
+    .dl-card-snapshot {
+      background: linear-gradient(135deg, rgba(57,211,83,0.12), rgba(57,211,83,0.05));
+      border: 1px solid rgba(57,211,83,0.3);
+      box-shadow: 0 4px 24px rgba(57,211,83,0.08);
+    }
+    .dl-card-snapshot:hover { box-shadow: 0 8px 40px rgba(57,211,83,0.2); border-color: rgba(57,211,83,0.5); }
+
+    .dl-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem; font-weight: 700;
+    }
+    .dl-card-desc { font-size: 0.8rem; color: var(--muted); }
+    .dl-card-badge {
+      font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+      border-radius: 100px; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .badge-stable { background: rgba(255,106,0,0.2); color: var(--fire3); }
+    .badge-dev { background: rgba(57,211,83,0.15); color: var(--seed); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 32px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    footer .logo { font-size: 1rem; }
+    footer p { color: var(--muted); font-size: 0.82rem; }
+    footer a { color: var(--fire3); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── GLOW DIVIDER ── */
+    .glow-line {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--fire1), transparent);
+      opacity: 0.4; margin: 0;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp .7s ease both; }
+    .hero .badge   { animation-delay: .05s; }
+    .hero h1       { animation-delay: .15s; }
+    .hero .hero-sub{ animation-delay: .25s; }
+    .hero .dl-wrapper { animation-delay: .35s; }
+    .hero .dl-note { animation-delay: .4s; }
+    .hero .tags    { animation-delay: .5s; }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 16px; }
+      footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+      .dl-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-	<header>
-		<h1>FireSeed Browser</h1>
-		<nav>
-			<ul>
-				<li><a href="#about">About Me</a></li>
-				<li><a href="#features">Features</a></li>
-				<li><a href="#download">Download</a></li>
-			</ul>
-		</nav>
-	</header>
-	<main>
-		<section id="about">
-			<h2>About Me</h2>
-			<p>This is a brief description of the FireSeed browser and its creator.</p>
-		</section>
-		<section id="features">
-			<h2>Features</h2>
-			<ul>
-				<li>Fast and secure browsing experience</li>
-				<li>Simplified user interface</li>
-				<li>Support for latest web standards</li>
-			</ul>
-		</section>
-		<section id="download">
-			<h2>Download</h2>
-			<p>Get the latest version of FireSeed browser:</p>
-			<button id="release-btn" download="FireSeed Browser.exe">Download Release (2024)</button>
-			<button id="snapshot-btn" download="FireSeed Browser Snapshot.exe">Download Snapshot (2024)</button>
-			<script>
-				const releaseBtn = document.getElementById('release-btn');
-				const snapshotBtn = document.getElementById('snapshot-btn');
-				
-				releaseBtn.addEventListener('click', () => {
-					location.href = 'https://github.com/Scripter456-2/FireSeed/releases/latest';
-					alert("Please install the downloaded file to start using FireSeed browser.");
-				});
-				
-				snapshotBtn.addEventListener('click', () => {
-					location.href = 'https://github.com/Scripter456-2/FireSeed/releases/tag/Snapshot';
-					alert("Please install the downloaded file to start using FireSeed browser.");
-				});
-			</script>
-		</section>
-	</main>
-	<footer>
-		<p>&copy; 2024 FireSeed Browser. All rights reserved.</p>
-	</footer>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <img src="FireSeedIcon.ico" alt="FireSeed" class="logo-icon" />
+    <span class="fire">Fire</span><span class="seed">Seed</span>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#download">Download</a>
+    <a href="https://github.com/Scripter456-2/FireSeed" target="_blank" class="nav-gh">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Open Source Browser</div>
+  <h1>FireSeed</h1>
+  <p class="hero-sub">A lightweight, Python-powered browser built for speed and simplicity. Download the stable Release or live on the edge with a Snapshot build.</p>
+
+  <div class="dl-wrapper">
+    <a id="btn-release" href="https://github.com/Scripter456-2/FireSeed/releases/tag/Release" target="_blank" class="btn btn-release">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      Download Release
+    </a>
+    <a id="btn-snapshot" href="https://github.com/Scripter456-2/FireSeed/releases/tag/Snapshot" target="_blank" class="btn btn-snapshot">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#39d353" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      <span style="color:var(--seed)">Download Snapshot</span>
+    </a>
+  </div>
+  <p class="dl-note">Source code available on <a href="https://github.com/Scripter456-2/FireSeed" target="_blank">GitHub</a></p>
+
+  <div class="tags">
+    <span class="tag">🐍 Python</span>
+    <span class="tag">🪟 Windows</span>
+    <span class="tag">⚡ Lightweight</span>
+    <span class="tag">🔓 Open Source</span>
+    <span class="tag">🆓 Free</span>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <h2 class="section-title">Why FireSeed?</h2>
+  <p class="section-sub">Built from the ground up in Python, designed to be fast and hackable.</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Fast & Lightweight</h3>
+      <p>FireSeed is stripped down to the essentials. No bloat, just browsing. Starts up in seconds.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🐍</div>
+      <h3>Python Powered</h3>
+      <p>Built entirely in Python, making it easy to extend, modify, and hack to your liking.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔥</div>
+      <h3>Two Release Channels</h3>
+      <p>Choose the stable <strong>Release</strong> build for reliability, or grab the latest <strong>Snapshot</strong> for cutting-edge features.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔓</div>
+      <h3>Fully Open Source</h3>
+      <p>Every line of code is public on GitHub. Fork it, contribute, or learn how it works.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛠️</div>
+      <h3>Auto-Update Ready</h3>
+      <p>Stay current automatically. FireSeed checks for new releases in the background so you never miss an update.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌱</div>
+      <h3>Actively Growing</h3>
+      <p>New features land in Snapshot builds first. The project is under active development with regular improvements.</p>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- DOWNLOAD -->
+<section class="download-section" id="download">
+  <div class="download-box">
+    <h2 class="section-title">Get FireSeed</h2>
+    <p class="section-sub">Pick the channel that's right for you.</p>
+
+    <div class="dl-grid">
+      <!-- Release -->
+      <a id="dl-release" href="https://github.com/Scripter456-2/FireSeed/releases/tag/Release" target="_blank" class="dl-card dl-card-release">
+        <div style="font-size:2rem">🔥</div>
+        <span class="dl-card-badge badge-stable">Stable</span>
+        <span class="dl-card-title">Release</span>
+        <span class="dl-card-desc">Tested &amp; stable. Recommended for most users.</span>
+      </a>
+      <!-- Snapshot -->
+      <a id="dl-snapshot" href="https://github.com/Scripter456-2/FireSeed/releases/tag/Snapshot" target="_blank" class="dl-card dl-card-snapshot">
+        <div style="font-size:2rem">🌱</div>
+        <span class="dl-card-badge badge-dev">Dev</span>
+        <span class="dl-card-title">Snapshot</span>
+        <span class="dl-card-desc">Latest changes. May include experimental features.</span>
+      </a>
+    </div>
+
+    <p class="dl-note">
+      All builds are hosted on
+      <a href="https://github.com/Scripter456-2/FireSeed/releases" target="_blank">GitHub Releases</a>.
+      No sign-up required.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">
+    <img src="FireSeedIcon.ico" alt="FireSeed" style="width:28px;height:28px;object-fit:contain;" />
+    <span class="fire">Fire</span><span class="seed">Seed</span>
+  </div>
+  <p>© 2026 FireSeed · <a href="https://github.com/Scripter456-2/FireSeed" target="_blank">GitHub</a> · Open Source</p>
+</footer>
+
+<script>
+  // Animated particle background
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function randomColor() {
+    const colors = ['#ff6a00','#ee0979','#ffb347','#ff4500','#ff8c00'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: -(Math.random() * 0.5 + 0.2),
+      alpha: Math.random() * 0.6 + 0.2,
+      color: randomColor()
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+      p.x += p.dx;
+      p.y += p.dy;
+      p.alpha -= 0.001;
+      if (p.y < -10 || p.alpha <= 0) {
+        p.x = Math.random() * W;
+        p.y = H + 10;
+        p.alpha = Math.random() * 0.6 + 0.2;
+        p.dy = -(Math.random() * 0.5 + 0.2);
+        p.dx = (Math.random() - 0.5) * 0.4;
+        p.color = randomColor();
+      }
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Scroll-reveal cards
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.animation = `fadeUp .6s ease ${i * 0.08}s both`;
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.card, .dl-card').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
