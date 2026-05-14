@@ -296,6 +296,261 @@
       opacity: 0.4; margin: 0;
     }
 
+    /* ── SCROLL PROGRESS BAR ── */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
+      background: linear-gradient(90deg, var(--fire1), var(--fire2), var(--fire3));
+      width: 0%; transition: width .05s linear;
+    }
+
+    /* ── BACK TO TOP ── */
+    .back-to-top {
+      position: fixed; bottom: 32px; right: 32px; z-index: 100;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--fire1), var(--fire2));
+      border: none; cursor: pointer; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(255,106,0,0.4);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
+    }
+    .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .back-to-top:hover { box-shadow: 0 6px 30px rgba(255,106,0,0.6); transform: translateY(-3px); }
+
+    /* ── CARD GLOW BORDER ── */
+    .card { position: relative; }
+    .card::before {
+      content: ''; position: absolute; inset: -1px;
+      border-radius: 17px; padding: 1px;
+      background: linear-gradient(135deg, transparent 30%, var(--fire1) 50%, transparent 70%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0; transition: opacity .4s;
+    }
+    .card:hover::before { opacity: 1; }
+
+    /* ── FAQ ACCORDION ── */
+    .faq-section {
+      position: relative; z-index: 1;
+      padding: 80px 24px; max-width: 700px; margin: 0 auto;
+    }
+    .faq-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+      transition: border-color .2s;
+    }
+    .faq-item:hover { border-color: rgba(255,106,0,0.25); }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; cursor: pointer; font-weight: 600; font-size: 0.95rem;
+      user-select: none;
+    }
+    .faq-q .arrow {
+      font-size: 1.2rem; transition: transform .3s;
+      color: var(--fire3);
+    }
+    .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .35s;
+      padding: 0 22px;
+      color: var(--muted); font-size: 0.88rem; line-height: 1.65;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding: 0 22px 18px; }
+
+    /* ── ROADMAP TIMELINE ── */
+    .roadmap-section {
+      position: relative; z-index: 1;
+      padding: 80px 24px; max-width: 700px; margin: 0 auto;
+    }
+    .timeline {
+      position: relative; padding-left: 32px;
+      border-left: 2px solid rgba(255,106,0,0.25);
+    }
+    .tl-item {
+      position: relative; margin-bottom: 36px;
+    }
+    .tl-item::before {
+      content: ''; position: absolute;
+      left: -39px; top: 4px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--fire1); border: 2px solid var(--bg);
+      box-shadow: 0 0 10px rgba(255,106,0,0.5);
+    }
+    .tl-item.done::before { background: var(--seed); box-shadow: 0 0 10px rgba(57,211,83,0.5); }
+    .tl-item.future::before { background: #555; box-shadow: none; }
+    .tl-tag {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 4px;
+    }
+    .tl-item.done .tl-tag { color: var(--seed); }
+    .tl-item .tl-tag { color: var(--fire3); }
+    .tl-item.future .tl-tag { color: #555; }
+    .tl-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .tl-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── CREDITS ── */
+    .credits-section {
+      position: relative; z-index: 1;
+      padding: 80px 24px; text-align: center;
+    }
+    .credits-grid {
+      display: flex; flex-wrap: wrap; gap: 20px;
+      justify-content: center; max-width: 800px; margin: 0 auto;
+    }
+    .credit-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px 24px;
+      width: 220px; text-align: center;
+      transition: border-color .2s, transform .2s;
+    }
+    .credit-card:hover { border-color: rgba(255,106,0,0.3); transform: translateY(-4px); }
+    .credit-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, var(--fire1), var(--fire2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: #fff; font-weight: 700;
+      box-shadow: 0 4px 20px rgba(255,106,0,0.3);
+    }
+    .credit-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.05rem; margin-bottom: 4px;
+    }
+    .credit-role {
+      font-size: 0.78rem; color: var(--fire3); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+    }
+    .credit-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .credit-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 12px; font-size: 0.8rem; color: var(--muted);
+      text-decoration: none; transition: color .2s;
+    }
+    .credit-link:hover { color: var(--text); }
+
+    /* ── CURSOR GLOW ── */
+    .cursor-glow {
+      position: fixed; width: 400px; height: 400px;
+      border-radius: 50%; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle, rgba(255,106,0,0.08) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: left .15s ease, top .15s ease;
+    }
+
+    /* ── BROWSER MOCKUP ── */
+    .mockup-wrapper {
+      margin-top: 50px; perspective: 1000px;
+      animation: fadeUp .7s ease .6s both;
+    }
+    .browser-mockup {
+      width: min(680px, 90vw); border-radius: 14px;
+      background: var(--card); border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(255,106,0,0.08);
+      transform: rotateX(4deg); transition: transform .4s;
+    }
+    .browser-mockup:hover { transform: rotateX(0deg); }
+    .mockup-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; background: #1a1a24;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+    .mockup-url {
+      flex: 1; margin-left: 10px; padding: 5px 12px;
+      background: rgba(255,255,255,0.05); border-radius: 6px;
+      font-size: 0.72rem; color: var(--muted); font-family: 'Inter', sans-serif;
+    }
+    .mockup-body {
+      padding: 28px; min-height: 180px;
+      background: linear-gradient(135deg, #0d0d14, #12121c);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mockup-body .typing {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 1.1rem; color: var(--seed);
+    }
+    .typing-cursor {
+      display: inline-block; width: 2px; height: 1.2em;
+      background: var(--seed); margin-left: 3px;
+      vertical-align: text-bottom;
+      animation: blink .7s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      position: relative; z-index: 1;
+      overflow: hidden; padding: 18px 0;
+      background: var(--bg2); border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .marquee-track {
+      display: flex; gap: 48px; width: max-content;
+      animation: marquee 25s linear infinite;
+    }
+    .marquee-item {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem; color: var(--muted);
+      white-space: nowrap; display: flex; align-items: center; gap: 8px;
+    }
+    .marquee-item span { color: var(--fire3); }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    /* ── STATS ── */
+    .stats-section {
+      position: relative; z-index: 1;
+      padding: 80px 24px; max-width: 900px; margin: 0 auto;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .stat-card {
+      text-align: center; padding: 32px 20px;
+      border-radius: 16px; background: var(--card);
+      border: 1px solid var(--border);
+      transition: border-color .2s, transform .2s;
+    }
+    .stat-card:hover { border-color: rgba(255,106,0,0.3); transform: translateY(-3px); }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.8rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--fire3), var(--fire1));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 6px; }
+
+    /* ── COMPARE TABLE ── */
+    .compare-section {
+      position: relative; z-index: 1;
+      padding: 80px 24px; max-width: 700px; margin: 0 auto;
+    }
+    .compare-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card); border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .compare-table th, .compare-table td {
+      padding: 14px 20px; text-align: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .compare-table thead th {
+      background: #1a1a24; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+    }
+    .compare-table thead th:nth-child(2) { color: var(--fire3); }
+    .compare-table thead th:nth-child(3) { color: var(--seed); }
+    .compare-table tbody td:first-child { text-align: left; color: var(--muted); }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .check { color: var(--seed); font-size: 1.1rem; }
+    .cross { color: #555; font-size: 1.1rem; }
+
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -314,11 +569,16 @@
       .nav-links { gap: 16px; }
       footer { padding: 24px 20px; flex-direction: column; text-align: center; }
       .dl-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .compare-table th, .compare-table td { padding: 10px 12px; font-size: 0.8rem; }
+      .credit-card { width: 100%; }
     }
   </style>
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
 <canvas id="bg-canvas"></canvas>
 
 <!-- NAV -->
@@ -330,6 +590,8 @@
   <div class="nav-links">
     <a href="#features">Features</a>
     <a href="#download">Download</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#credits">Credits</a>
     <a href="https://github.com/Scripter456-2/FireSeed" target="_blank" class="nav-gh">
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
       GitHub
@@ -362,7 +624,34 @@
     <span class="tag">🔓 Open Source</span>
     <span class="tag">🆓 Free</span>
   </div>
+
+  <!-- BROWSER MOCKUP -->
+  <div class="mockup-wrapper">
+    <div class="browser-mockup">
+      <div class="mockup-bar">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <div class="mockup-url">🔒 fireseed://home</div>
+      </div>
+      <div class="mockup-body">
+        <span class="typing" id="typingText"></span><span class="typing-cursor"></span>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!-- MARQUEE TICKER -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marquee">
+    <div class="marquee-item">🔥 <span>FireSeed Browser</span></div>
+    <div class="marquee-item">⚡ Lightning Fast Startup</div>
+    <div class="marquee-item">🐍 <span>100% Python</span></div>
+    <div class="marquee-item">🛡️ Open Source & Transparent</div>
+    <div class="marquee-item">🌱 <span>Snapshot Builds</span> — Live on the Edge</div>
+    <div class="marquee-item">🔄 Auto-Update Built In</div>
+    <div class="marquee-item">💻 <span>Windows Ready</span></div>
+    <div class="marquee-item">🆓 Forever Free</div>
+  </div>
+</div>
 
 <div class="glow-line"></div>
 
@@ -406,6 +695,100 @@
 
 <div class="glow-line"></div>
 
+<!-- STATS -->
+<section class="stats-section">
+  <h2 class="section-title">By the Numbers</h2>
+  <p class="section-sub">FireSeed is growing every day.</p>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" data-target="7">0</div><div class="stat-label">Versions Released</div></div>
+    <div class="stat-card"><div class="stat-num" data-target="100" data-suffix="%">0</div><div class="stat-label">Python Powered</div></div>
+    <div class="stat-card"><div class="stat-num" data-target="2">0</div><div class="stat-label">Release Channels</div></div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- COMPARE TABLE -->
+<section class="compare-section">
+  <h2 class="section-title">Release vs Snapshot</h2>
+  <p class="section-sub">Compare channels at a glance.</p>
+  <table class="compare-table">
+    <thead><tr><th>Feature</th><th>🔥 Release</th><th>🌱 Snapshot</th></tr></thead>
+    <tbody>
+      <tr><td>Stability</td><td><span class="check">✓ Stable</span></td><td><span class="cross">⚠ Experimental</span></td></tr>
+      <tr><td>Latest Features</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>Tested & Verified</td><td><span class="check">✓</span></td><td><span class="cross">—</span></td></tr>
+      <tr><td>Auto-Update</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>Recommended For</td><td>Most Users</td><td>Developers</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <h2 class="section-title">FAQ</h2>
+  <p class="section-sub">Common questions, quick answers.</p>
+  <div class="faq-item">
+    <div class="faq-q">What is FireSeed? <span class="arrow">▾</span></div>
+    <div class="faq-a">FireSeed is a lightweight web browser built entirely in Python. It's designed to be fast, hackable, and open source.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What's the difference between Release and Snapshot? <span class="arrow">▾</span></div>
+    <div class="faq-a">Release is the stable, tested version recommended for daily use. Snapshot includes the latest changes and experimental features — great for developers who want to stay on the cutting edge.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Is FireSeed free? <span class="arrow">▾</span></div>
+    <div class="faq-a">Yes! FireSeed is 100% free and open source. No ads, no subscriptions, no catch. The source code is available on GitHub.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Does it auto-update? <span class="arrow">▾</span></div>
+    <div class="faq-a">Yes. FireSeed has a built-in auto-update system that checks for new releases in the background. You can configure the update channel in settings.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What platforms are supported? <span class="arrow">▾</span></div>
+    <div class="faq-a">Currently FireSeed is available for Windows. More platforms may be supported in the future as the project grows.</div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- ROADMAP -->
+<section class="roadmap-section" id="roadmap">
+  <h2 class="section-title">Roadmap</h2>
+  <p class="section-sub">Where we've been, and where we're going.</p>
+  <div class="timeline">
+    <div class="tl-item done">
+      <div class="tl-tag">Completed</div>
+      <div class="tl-title">FireSeed 1.0 – 6.2</div>
+      <div class="tl-desc">Core browser functionality, tab management, and basic UI.</div>
+    </div>
+    <div class="tl-item done">
+      <div class="tl-tag">Completed</div>
+      <div class="tl-title">FireSeed 7 – Auto-Update</div>
+      <div class="tl-desc">Channel-aware update system pulling from GitHub Releases.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-tag">In Progress</div>
+      <div class="tl-title">Plugin & Extension System</div>
+      <div class="tl-desc">Allow users to extend FireSeed with custom plugins.</div>
+    </div>
+    <div class="tl-item future">
+      <div class="tl-tag">Planned</div>
+      <div class="tl-title">Cross-Platform Support</div>
+      <div class="tl-desc">Expanding to macOS and Linux builds.</div>
+    </div>
+    <div class="tl-item future">
+      <div class="tl-tag">Planned</div>
+      <div class="tl-title">FireSeed AI Integration</div>
+      <div class="tl-desc">Smart browsing features powered by AI.</div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
 <!-- DOWNLOAD -->
 <section class="download-section" id="download">
   <div class="download-box">
@@ -413,14 +796,12 @@
     <p class="section-sub">Pick the channel that's right for you.</p>
 
     <div class="dl-grid">
-      <!-- Release -->
       <a id="dl-release" href="https://github.com/Scripter456-2/FireSeed/releases/tag/Release" target="_blank" class="dl-card dl-card-release">
         <div style="font-size:2rem">🔥</div>
         <span class="dl-card-badge badge-stable">Stable</span>
         <span class="dl-card-title">Release</span>
         <span class="dl-card-desc">Tested &amp; stable. Recommended for most users.</span>
       </a>
-      <!-- Snapshot -->
       <a id="dl-snapshot" href="https://github.com/Scripter456-2/FireSeed/releases/tag/Snapshot" target="_blank" class="dl-card dl-card-snapshot">
         <div style="font-size:2rem">🌱</div>
         <span class="dl-card-badge badge-dev">Dev</span>
@@ -437,80 +818,137 @@
   </div>
 </section>
 
+<div class="glow-line"></div>
+
+<!-- CREDITS -->
+<section class="credits-section" id="credits">
+  <h2 class="section-title">Credits</h2>
+  <p class="section-sub">The people behind FireSeed.</p>
+  <div class="credits-grid">
+    <div class="credit-card">
+      <div class="credit-avatar">S</div>
+      <div class="credit-name">Scripter456-2</div>
+      <div class="credit-role">Creator & Lead Developer</div>
+      <div class="credit-desc">Built FireSeed from scratch. Handles all core development, architecture, and releases.</div>
+      <a href="https://github.com/Scripter456-2" target="_blank" class="credit-link">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        @Scripter456-2
+      </a>
+    </div>
+    <div class="credit-card">
+      <div class="credit-avatar" style="background:linear-gradient(135deg,#39d353,#1a8f3a);">🐍</div>
+      <div class="credit-name">Python Community</div>
+      <div class="credit-role">Language & Ecosystem</div>
+      <div class="credit-desc">FireSeed is built on top of the amazing Python language and its open source ecosystem.</div>
+    </div>
+    <div class="credit-card">
+      <div class="credit-avatar" style="background:linear-gradient(135deg,#333,#1a1a1a);">❤️</div>
+      <div class="credit-name">Open Source</div>
+      <div class="credit-role">Community & Contributors</div>
+      <div class="credit-desc">Thanks to everyone who stars, forks, reports bugs, or contributes to making FireSeed better.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
 <!-- FOOTER -->
 <footer>
   <div class="logo">
     <img src="FireSeedIcon.ico" alt="FireSeed" style="width:28px;height:28px;object-fit:contain;" />
     <span class="fire">Fire</span><span class="seed">Seed</span>
   </div>
-  <p>© 2026 FireSeed · <a href="https://github.com/Scripter456-2/FireSeed" target="_blank">GitHub</a> · Open Source</p>
+  <p>© 2026 FireSeed · Made by <a href="https://github.com/Scripter456-2" target="_blank">Scripter456-2</a> · <a href="https://github.com/Scripter456-2/FireSeed" target="_blank">GitHub</a> · Open Source</p>
 </footer>
 
 <script>
-  // Animated particle background
+  // ── CURSOR GLOW ──
+  const glow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+
+  // ── PARTICLE BACKGROUND ──
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
   let W, H, particles = [];
+  function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  const colors = ['#ff6a00','#ee0979','#ffb347','#ff4500','#ff8c00'];
+  const rc = () => colors[Math.floor(Math.random() * colors.length)];
+  for (let i = 0; i < 60; i++) particles.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*2+.5, dx:(Math.random()-.5)*.4, dy:-(Math.random()*.5+.2), a:Math.random()*.6+.2, c:rc() });
+  (function draw() {
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.globalAlpha=p.a; ctx.fill(); p.x+=p.dx; p.y+=p.dy; p.a-=.001; if(p.y<-10||p.a<=0){p.x=Math.random()*W;p.y=H+10;p.a=Math.random()*.6+.2;p.dy=-(Math.random()*.5+.2);p.dx=(Math.random()-.5)*.4;p.c=rc();} });
+    ctx.globalAlpha=1; requestAnimationFrame(draw);
+  })();
 
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  function randomColor() {
-    const colors = ['#ff6a00','#ee0979','#ffb347','#ff4500','#ff8c00'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
-  for (let i = 0; i < 60; i++) {
-    particles.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      r: Math.random() * 2 + 0.5,
-      dx: (Math.random() - 0.5) * 0.4,
-      dy: -(Math.random() * 0.5 + 0.2),
-      alpha: Math.random() * 0.6 + 0.2,
-      color: randomColor()
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    particles.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.alpha;
-      ctx.fill();
-      p.x += p.dx;
-      p.y += p.dy;
-      p.alpha -= 0.001;
-      if (p.y < -10 || p.alpha <= 0) {
-        p.x = Math.random() * W;
-        p.y = H + 10;
-        p.alpha = Math.random() * 0.6 + 0.2;
-        p.dy = -(Math.random() * 0.5 + 0.2);
-        p.dx = (Math.random() - 0.5) * 0.4;
-        p.color = randomColor();
-      }
-    });
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(draw);
-  }
-  draw();
-
-  // Scroll-reveal cards
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        e.target.style.animation = `fadeUp .6s ease ${i * 0.08}s both`;
-        observer.unobserve(e.target);
-      }
-    });
+  // ── SCROLL REVEAL ──
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => { if(e.isIntersecting){ e.target.style.animation=`fadeUp .6s ease ${i*.08}s both`; obs.unobserve(e.target); } });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.card, .dl-card').forEach(el => observer.observe(el));
+  document.querySelectorAll('.card,.dl-card,.stat-card').forEach(el => obs.observe(el));
+
+  // ── MARQUEE DUPLICATE ──
+  const mq = document.getElementById('marquee');
+  mq.innerHTML += mq.innerHTML;
+
+  // ── TYPING EFFECT ──
+  const phrases = ['Welcome to FireSeed 🔥','Browsing, reimagined.','Built with Python 🐍','Fast. Open. Free.'];
+  const typEl = document.getElementById('typingText');
+  let pi=0, ci=0, deleting=false;
+  function typeLoop() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+      typEl.textContent = phrase.slice(0, ++ci);
+      if (ci === phrase.length) { deleting = true; setTimeout(typeLoop, 1800); return; }
+      setTimeout(typeLoop, 70);
+    } else {
+      typEl.textContent = phrase.slice(0, --ci);
+      if (ci === 0) { deleting = false; pi = (pi+1) % phrases.length; setTimeout(typeLoop, 400); return; }
+      setTimeout(typeLoop, 35);
+    }
+  }
+  typeLoop();
+
+  // ── STATS COUNTER ──
+  const statObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = +el.dataset.target, suffix = el.dataset.suffix || '';
+      let cur = 0;
+      const step = () => { cur += Math.ceil(target/40); if(cur>=target){el.textContent=target+suffix;} else {el.textContent=cur+suffix; requestAnimationFrame(step);} };
+      step(); statObs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-num').forEach(el => statObs.observe(el));
+
+  // ── SCROLL PROGRESS BAR ──
+  const prog = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - innerHeight;
+    prog.style.width = (scrollY / h * 100) + '%';
+  });
+
+  // ── BACK TO TOP ──
+  const btt = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    btt.classList.toggle('visible', scrollY > 500);
+  });
+  btt.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ── FAQ ACCORDION ──
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      document.querySelectorAll('.faq-item').forEach(i => { if(i !== item) i.classList.remove('open'); });
+      item.classList.toggle('open');
+    });
+  });
 </script>
 </body>
 </html>
